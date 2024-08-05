@@ -9,5 +9,4 @@ public class UserGeniusApiRestfulApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UserGeniusApiRestfulApplication.class, args);
 	}
-
 }

@@ -11,6 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,6 +36,9 @@ public class UserPhoneData {
     @EqualsAndHashCode.Include
     private UUID id;
 
+    @NotBlank
+    @NotNull
+    @NotEmpty
     @Column(name = "number")
     private String number;
 

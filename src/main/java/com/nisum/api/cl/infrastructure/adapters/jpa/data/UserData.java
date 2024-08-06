@@ -11,13 +11,17 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -36,12 +40,23 @@ public class UserData {
     @EqualsAndHashCode.Include
     private UUID id;
 
+    @NotBlank
+    @NotNull
+    @NotEmpty
     @Column(name = "name")
     private String name;
 
+    @Email(regexp = "^[a-zA-Z._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "Invalid email format")
+    @NotBlank
+    @NotNull
+    @NotEmpty
     @Column(name = "email")
     private String email;
 
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one digit, and one special character.")
+    @NotBlank
+    @NotNull
+    @NotEmpty
     @Column(name = "password")
     private String password;
 
@@ -51,13 +66,11 @@ public class UserData {
     @Column(name = "updated_date")
     private Date updatedDate;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<UserPhoneData> phones = new ArrayList<>();
+    @Column(name = "is_active")
+    private Boolean isActive;
 
-    public void addPhone(UserPhoneData userPhoneData){
-        phones.add(userPhoneData);
-        userPhoneData.setUser(this);
-    }
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserPhoneData> phones;
 
     @PrePersist
     private void beforePersist(){

@@ -15,44 +15,48 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Example API", description = "Example API for demonstrating OpenAPI integration")
+@Tag(name = "API RESTful users", description = "OpenAPI integration BCI")
 @RequiredArgsConstructor
 public class UserRoute {
-
-    private final CreateUserUseCase userUseCase;
 
     @Qualifier("defaultMapper")
     private final ModelMapper mapper;
 
-    @Operation(summary = "Get a greeting message")
+    private final CreateUserUseCase userUseCase;
+
+    @Operation(summary = "Save in system a user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found the greeting"),
-            @ApiResponse(responseCode = "400", description = "Invalid request"),
-            @ApiResponse(responseCode = "404", description = "Greeting not found")
-    })
-    @GetMapping("/greeting")
-    public String getGreeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-        return String.format("Hello, %s!", name);
-    }
-
-    @ApiResponse(responseCode = "400", description = "When the request have a field invalid we response this",
-            content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            })
-    @Operation(summary = "Save in system a document")
+            @ApiResponse(responseCode = "201", description = "save user", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "400", description = "When the request have a field invalid we response this",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "When email already exists ", content = @Content)})
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody UserData user){
+    public ResponseEntity<?> save(@Valid @RequestBody UserData user, BindingResult result) {
 
+        Map<String, Object> validations = new HashMap<>();
+        if (result.hasErrors()) {
+            List<String> errors = result.getFieldErrors()
+                    .stream()
+                    .map(e -> "Field: '" + e.getField() + "' " + e.getDefaultMessage())
+                    .collect(Collectors.toList());
+            validations.put("Error List", errors);
+            return new ResponseEntity<>(validations, HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(userUseCase.addUser(mapper.map(user, User.class)), HttpStatus.CREATED);
     }
 }

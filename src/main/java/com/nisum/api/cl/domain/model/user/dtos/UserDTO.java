@@ -1,4 +1,4 @@
-package com.nisum.api.cl.domain.model.user;
+package com.nisum.api.cl.domain.model.user.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,13 +16,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
+public class UserDTO {
 
     private UUID id;
-    private String name;
-    private String email;
-    private String password;
-    private List<UserPhone> phones;
     private Date createdDate;
     private Date updatedDate;
     private Boolean isActive;

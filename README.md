@@ -114,6 +114,10 @@ Además, se ha integrado Swagger para la documentación de la API.
 
    5. **cURL**:
 
+**Colección postman**
+
+[nisum.postman_collection.json](..%2Fnisum.postman_collection.json)
+
        ```
        curl --location 'http://localhost:9001/api/register' \
        --header 'Content-Type: application/json' \

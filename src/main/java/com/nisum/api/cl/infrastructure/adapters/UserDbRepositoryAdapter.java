@@ -76,9 +76,6 @@ public class UserDbRepositoryAdapter implements UserRepository {
         return toDtoUser(savedUser);
     }
 
-    public static String getToken(String token){
-        return token;
-    }
     private UserDTO toDtoUser(UserData userData){
         return modelMapper.map(userData, UserDTO.class);
     }

@@ -1,4 +1,4 @@
-package com.nisum.api.cl.infrastructure.adapters.security.service.impl;
+package com.nisum.api.cl.infrastructure.adapters.security.service;
 
 import com.nisum.api.cl.infrastructure.adapters.jpa.user.UserDataDAO;
 import com.nisum.api.cl.infrastructure.adapters.jpa.user.data.UserData;

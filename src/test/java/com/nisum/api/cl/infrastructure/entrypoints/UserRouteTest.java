@@ -3,7 +3,7 @@ package com.nisum.api.cl.infrastructure.entrypoints;
 import com.nisum.api.cl.domain.model.user.User;
 import com.nisum.api.cl.domain.model.user.dtos.UserDTO;
 import com.nisum.api.cl.domain.usecase.CreateUserUseCase;
-import com.nisum.api.cl.infrastructure.adapters.jpa.data.UserData;
+import com.nisum.api.cl.infrastructure.adapters.jpa.user.data.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;

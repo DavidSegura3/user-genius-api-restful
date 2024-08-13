@@ -1,6 +1,6 @@
-package com.nisum.api.cl.infrastructure.adapters.jpa;
+package com.nisum.api.cl.infrastructure.adapters.jpa.user;
 
-import com.nisum.api.cl.infrastructure.adapters.jpa.data.UserPhoneData;
+import com.nisum.api.cl.infrastructure.adapters.jpa.user.data.UserPhoneData;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

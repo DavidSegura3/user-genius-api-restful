@@ -1,5 +1,6 @@
-package com.nisum.api.cl.infrastructure.adapters.jpa.data;
+package com.nisum.api.cl.infrastructure.adapters.jpa.user.data;
 
+import com.nisum.api.cl.infrastructure.adapters.jpa.role.data.RoleData;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,15 +8,19 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -46,6 +51,12 @@ public class UserData {
     @Column(name = "name")
     private String name;
 
+    @NotBlank
+    @NotNull
+    @NotEmpty
+    @Column(name = "username", unique = true)
+    private String username;
+
     @Email(regexp = "^[a-zA-Z._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "Invalid email format")
     @NotBlank
     @NotNull
@@ -53,7 +64,6 @@ public class UserData {
     @Column(name = "email")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one digit, and one special character.")
     @NotBlank
     @NotNull
     @NotEmpty
@@ -66,15 +76,32 @@ public class UserData {
     @Column(name = "updated_date")
     private Date updatedDate;
 
+    @Column(name = "last_login")
+    private Date lastLogin;
+
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @Column(name = "token", length = 1000)
+    private String token;
+
+    @Transient
+    private boolean admin;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserPhoneData> phones;
 
+    @ManyToMany
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})})
+    private List<RoleData> roles;
+
     @PrePersist
     private void beforePersist(){
         this.createdDate = new Date();
+        this.lastLogin = new Date();
+        this.isActive = true;
     }
 
     @PreUpdate

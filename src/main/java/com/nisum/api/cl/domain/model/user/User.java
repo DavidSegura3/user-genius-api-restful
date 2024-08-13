@@ -1,6 +1,7 @@
 package com.nisum.api.cl.domain.model.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nisum.api.cl.infrastructure.adapters.jpa.role.data.RoleData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class User {
 
     private UUID id;
+    private String username;
     private String name;
     private String email;
     private String password;
@@ -27,4 +29,7 @@ public class User {
     private Date createdDate;
     private Date updatedDate;
     private Boolean isActive;
+    private String token;
+    private boolean admin;
+    private List<RoleData> roles;
 }

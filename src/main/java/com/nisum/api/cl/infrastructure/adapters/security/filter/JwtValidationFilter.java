@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.nisum.api.cl.infrastructure.adapters.security.config.TokenJwtConfig.SECRET_KEY;
+import static com.nisum.api.cl.infrastructure.adapters.security.utils.TokenSecretKey.SECRET_KEY;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.AUTHORITIES;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.CONTENT_TYPE;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.HEADER_AUTHORIZATION;
@@ -46,6 +46,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         }
 
         String token = header.replace(PREFIX_TOKEN.getValue(), "");
+        System.out.println(token);
 
         try {
             Claims claims = Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token).getPayload();
@@ -63,7 +64,6 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             chain.doFilter(request, response);
         } catch (JwtException e) {
-            //throw new JwtException(e.getMessage());
             Map<String, String> body = new HashMap<>();
             body.put("error", e.getMessage());
             body.put("message", "JWT token is invalid!");

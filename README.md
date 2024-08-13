@@ -57,29 +57,29 @@ Además, se ha integrado Swagger para la documentación de la API.
 - **Swagger**: Herramienta para la documentación y prueba de la API.
 
 
-## Patrones de diseño
-- **Chain of Responsability**
-- **Builder**
-- **Singleton**
-- **Chain of Responsability**
+## **Patrones de diseño**
+- Chain of Responsability
+- Builder
+- Singleton
+- Chain of Responsability
 
-## Estilo Arquitectónicos
-- **Microservices**
-- **Representational State Transfer(REST)**
+## **Estilo Arquitectónicos**
+- Microservices
+- Representational State Transfer(REST)
 
-## Patrones Arquitectónicos
+## **Patrones Arquitectónicos**
 
-- **Data Transfer Object(DTO)**
-- **Data Access Object(DAO)**
+- Data Transfer Object(DTO)
+- Data Access Object(DAO)
 
 
-## Requisitos
+## **Requisitos**
 
 - Java 8 o superior
 - Gradle 6.x o superior (para construcción y gestión de dependencias)
 
 
-## Instalación
+## **Instalación**
 
 1. **Clonar el repositorio**:
 
@@ -112,35 +112,121 @@ Además, se ha integrado Swagger para la documentación de la API.
     http://localhost:9001/v3/api-docs
     ```
 
-5. **cURL**:
+   5. **cURL**:
 
+       ```
+       curl --location 'http://localhost:9001/api/register' \
+       --header 'Content-Type: application/json' \
+       --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEb2UiLCJhdXRob3JpdGllcyI6IltdIiwidXNlcm5hbWUiOiJEb2UiLCJleHAiOjE3MjM1NTgwMzEsImlhdCI6MTcyMzU1NDQzMX0.apZbRaD4HSQseY1BuHUI_Ecdq-5lt5K3tUIDbw6ZRBc' \
+       --data-raw '{
+              "username" : "juan",
+              "name" : "Juan Rodriguez",
+              "admin": true,
+              "email" : "juanrodriguezz@example.com",
+              "password" : "Juanito03@",
+              "phones" : [
+                   {
+                      "number" : "1111111",
+                      "citycode" : "1",
+                      "countrycode" : "1"
+                   },
+                   {
+                      "number" : "2222222",
+                      "citycode" : "2",
+                      "countrycode" : "2"
+                   },
+                   {
+                      "number" : "3333333",
+                      "citycode" : "3",
+                      "countrycode" : "3"
+                   }
+              ]
+       }'
     ```
-    curl --location 'http://localhost:9001/api' \
+Para poder acceder al recurso anterior, primero se debe generar un token bearer y luego pasarlo como header o como Authorization,
+aquí esta el paso a paso:
+   
+5.1. Debemos acceder al siguiente cURL:
+
+```
+    curl --location 'http://localhost:9001/login' \
     --header 'Content-Type: application/json' \
-    --header 'Cookie: JSESSIONID=1209B89B327E898EB17E65A67FF61050' \
-    --data-raw '{
-    "name" : "Juan Rodriguez",
-    "email" : "juan@rodriguez.org",
-    "password" : "Juanito1234@",
-    "phones" : [
-    {
-    "number" : "1111111",
-    "citycode" : "1",
-    "countrycode" : "1"
-    },
-    {
-    "number" : "2222222",
-    "citycode" : "2",
-    "countrycode" : "2"
-    },
-    {
-    "number" : "3333333",
-    "citycode" : "3",
-    "countrycode" : "3"
-    }
-    ]
+    --data '{
+        "username" : "Doe",
+        "password" : "Password1!"
     }'
-    ```
+```
+En la parte de username y password, tenemos los siguientes registros que se cargan por defecto una vez se inicia la aplicación:
+
+```
+    ---------------------------------
+    |    "username" : "Doe",        |
+    |    "password" : "Password1!"  |
+    ---------------------------------
+    |    "username" : "Smith"       |
+    |    "password" : "Password2!"  |
+    ---------------------------------
+```
+Para probar necesita alguno de ellos, luego de eso puedo validar con un usuario nuevo
+
+Si las credenciales son validas, este generara el token y mostrara un mensaje como el siguiente:
+
+![img.png](img.png)
+
+De lo contrario, genera una excepción controlada como la siguiente:
+
+![img_1.png](img_1.png)
+
+
+Una vez generado el token, se debe asignar al cURL inicial para poder acceder al recurso, sin agregar el bearer token,
+mostrara un mensaje como el siguiente:
+
+![img_2.png](img_2.png)
+
+
+Parra poder acceder al recurso, debe asignar el token generado y pasarlo por **Header** o por **Authorization**
+
+
+**Por HEADER**
+Debe tener en cuenta que al agregarlo como Header, debe antepoder la palabra Bearer y un espacio en el valor
+del header.
+![img_3.png](img_3.png)
+
+
+existe un manera más sencilla que la anterior y es hacerlo directamente por Authorization
+
+
+**Por AUTHORIZATION**
+Aquí debe tener en cuenta que el tipo de autorización debe ser **Bearer Token**, seguido de eso en el campo
+Token, debe asignar el token generado anteriormente.
+
+![img_4.png](img_4.png)
+
+
+Una vez creado y asignado el token, por debajo se valida la autenticidad del token y si todo es correcto
+deja acceder al recurso y puede crear el usuario que necesite, como lo muestra la siguiente imagen:
+
+![img_5.png](img_5.png)
+
+Como mencione anteriormente, con el usuario nuevo que creemos, también puede generar un token:
+
+Como muestra la imagen anterior, el usuario que creamos tiene las siguientes credenciales:
+
+```
+    ---------------------------------
+    |    "username" : "juan",       |
+    |    "password" : "Juanito03@"  |
+    ---------------------------------
+```
+
+
+Las cuales le vamos a pasar al generador de token y me debe devolver un token con dichas credenciales:
+
+![img_6.png](img_6.png)
+
+De igual forma si las credenciales no son validas, debe generar un error como el mencionado anteriormente:
+
+![img_7.png](img_7.png)
 
 ## Estructura del Proyecto
 
@@ -150,6 +236,12 @@ Además, se ha integrado Swagger para la documentación de la API.
           - **adapters**: Adaptadores para establecer la conexión de la base de datos jpa.
             - **config**: Configuración del servicio para el mapper y la documentación
             - **jpa**: Interfaces para la persistencia de datos.
+            - **security**: Implementación de token con jwt y spring security.
+              - **config**: Configuración y permisos del token.
+              - **enums**: Clase para obtener valores que se usan en varias partes.
+              - **filter**: Clase con los filtros de validación del token, parte exitosa y no exitosa.
+              - **service**: Implementación del token.
+              - **utils**: Utilitaria para usar en varias partes.
           - **entrypoints**: Los entry points representan los puntos de entrada de la aplicación o el inicio de los flujos de negocio.
             - **exceptions**: Manejador de excepciones y clase de configuración para salida controlada del error 
         - **domain**: Interfaces para la persistencia de datos.
@@ -160,10 +252,10 @@ Además, se ha integrado Swagger para la documentación de la API.
     - **application.yml**: Configuración del microservicio.
 - **src/test/java**: Pruebas del microservicio.
 
-## Configuración
+## **Configuración**
 
 La configuración del microservicio se encuentra en `src/main/resources/application.yml`. Puedes ajustar la configuración de la base de datos, el puerto del servidor, entre otros parámetros.
 
-## Contribución
+## **Contribución**
 
 Las contribuciones son bienvenidas. Por favor, abre un *issue* o envía una *pull request* para cualquier mejora o corrección.

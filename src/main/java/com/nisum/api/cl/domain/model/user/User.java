@@ -29,6 +29,7 @@ public class User {
     private Date createdDate;
     private Date updatedDate;
     private Boolean isActive;
+    private String token;
     private boolean admin;
     private List<RoleData> roles;
 }

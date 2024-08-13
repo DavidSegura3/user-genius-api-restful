@@ -24,19 +24,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.nisum.api.cl.infrastructure.adapters.security.config.TokenJwtConfig.SECRET_KEY;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.AUTHORITIES;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.CONTENT_TYPE;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.HEADER_AUTHORIZATION;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.PREFIX_TOKEN;
 import static com.nisum.api.cl.infrastructure.adapters.security.enums.TokenJwt.USERNAME;
+import static com.nisum.api.cl.infrastructure.adapters.security.utils.TokenSecretKey.SECRET_KEY;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    //private final static SecretKey SECRET_KEY = Jwts.SIG.HS256.key().build();
     private final AuthenticationManager authenticationManager;
+    public static String token;
 
 
     @Override
@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .build();
 
 
-        String token = Jwts.builder()
+        token = Jwts.builder()
                 .subject(username)
                 .claims(claims)
                 .expiration(new Date(System.currentTimeMillis() + 3600000))

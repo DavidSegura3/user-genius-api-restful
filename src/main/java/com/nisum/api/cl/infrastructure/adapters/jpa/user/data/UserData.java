@@ -76,8 +76,14 @@ public class UserData {
     @Column(name = "updated_date")
     private Date updatedDate;
 
+    @Column(name = "last_login")
+    private Date lastLogin;
+
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @Column(name = "token", length = 1000)
+    private String token;
 
     @Transient
     private boolean admin;
@@ -94,6 +100,7 @@ public class UserData {
     @PrePersist
     private void beforePersist(){
         this.createdDate = new Date();
+        this.lastLogin = new Date();
         this.isActive = true;
     }
 

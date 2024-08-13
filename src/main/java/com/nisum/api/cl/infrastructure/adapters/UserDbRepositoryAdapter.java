@@ -11,6 +11,7 @@ import com.nisum.api.cl.infrastructure.adapters.jpa.user.UserDataDAO;
 import com.nisum.api.cl.infrastructure.adapters.jpa.user.UserPhoneDataDAO;
 import com.nisum.api.cl.infrastructure.adapters.jpa.user.data.UserData;
 import com.nisum.api.cl.infrastructure.adapters.jpa.user.data.UserPhoneData;
+import com.nisum.api.cl.infrastructure.adapters.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -51,7 +53,8 @@ public class UserDbRepositoryAdapter implements UserRepository {
         user.setRoles(roles);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+        user.setToken(JwtAuthenticationFilter.token);
+        user.setUpdatedDate(new Date());
         UserData userData = toDataUser(user);
 
         Optional<UserData> userFound = userDao.findByEmail(user.getEmail());
@@ -73,6 +76,9 @@ public class UserDbRepositoryAdapter implements UserRepository {
         return toDtoUser(savedUser);
     }
 
+    public static String getToken(String token){
+        return token;
+    }
     private UserDTO toDtoUser(UserData userData){
         return modelMapper.map(userData, UserDTO.class);
     }

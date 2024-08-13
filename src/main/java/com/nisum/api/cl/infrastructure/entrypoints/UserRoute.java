@@ -2,7 +2,8 @@ package com.nisum.api.cl.infrastructure.entrypoints;
 
 import com.nisum.api.cl.domain.model.user.User;
 import com.nisum.api.cl.domain.usecase.CreateUserUseCase;
-import com.nisum.api.cl.infrastructure.adapters.jpa.data.UserData;
+import com.nisum.api.cl.infrastructure.adapters.jpa.user.data.UserData;
+import com.nisum.api.cl.infrastructure.entrypoints.utils.Validations;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,11 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api")
 @Tag(name = "API RESTful users", description = "OpenAPI integration BCI")
@@ -45,17 +41,11 @@ public class UserRoute {
             @ApiResponse(responseCode = "400", description = "When the request have a field invalid we response this",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "409", description = "When email already exists ", content = @Content)})
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> save(@Valid @RequestBody UserData user, BindingResult result) {
 
-        Map<String, Object> validations = new HashMap<>();
-        if (result.hasErrors()) {
-            List<String> errors = result.getFieldErrors()
-                    .stream()
-                    .map(e -> "Field: '" + e.getField() + "' " + e.getDefaultMessage())
-                    .collect(Collectors.toList());
-            validations.put("Error List", errors);
-            return new ResponseEntity<>(validations, HttpStatus.BAD_REQUEST);
+        if(result.hasErrors()){
+            return Validations.validation(result);
         }
         return new ResponseEntity<>(userUseCase.addUser(mapper.map(user, User.class)), HttpStatus.CREATED);
     }
